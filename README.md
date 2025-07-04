@@ -139,7 +139,6 @@ docker ps
 
 ## 🙌 Author
 
-# 👥 Authors
 
 - **Joab Bodo**
 - **Nathaniel Shibadu**

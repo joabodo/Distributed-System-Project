@@ -141,7 +141,7 @@ docker ps
 
 **Joab Bodo**  
 Distributed Systems Project – 2025  
-Course: ICS XYZ
+Course: ICS 4A
 
 ---
 

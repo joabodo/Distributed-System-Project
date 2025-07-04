@@ -140,6 +140,8 @@ docker ps
 ## 🙌 Author
 
 **Joab Bodo**  
+**Nathaniel Shibadu** 
+**Alvin Nathey Kariuki** 
 Distributed Systems Project – 2025  
 Course: ICS 4A
 

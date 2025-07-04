@@ -10,6 +10,8 @@ votes = {
     "prometheus": 0
 }
 
+
+
 app = Flask(__name__)
 ring = ConsistentHashRing()
 managed_replicas = {}

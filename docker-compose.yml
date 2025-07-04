@@ -1,0 +1,44 @@
+services:
+  load_balancer:
+    build: ./load_balancer
+    image: lb_image
+    container_name: load_balancer
+    ports:
+      - "5000:5000"
+    networks:
+      - net1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    privileged: true
+
+  server1:
+    build: ./server
+    image: server_image
+    container_name: server1
+    networks:
+      - net1
+    environment:
+      - SERVER_ID=server1
+
+  server2:
+    build: ./server
+    image: server_image
+    container_name: server2
+    networks:
+      - net1
+    environment:
+      - SERVER_ID=server2
+
+  server3:
+    build: ./server
+    image: server_image
+    container_name: server3
+    networks:
+      - net1
+    environment:
+      - SERVER_ID=server3
+
+networks:
+  net1:
+    name: net1
+    driver: bridge

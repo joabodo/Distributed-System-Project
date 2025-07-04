@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Stack Voting App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .option {
+            width: 150px;
+            margin: 10px;
+            padding: 15px;
+            text-align: center;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .option:hover {
+            transform: scale(1.05);
+            background-color: #e0e6e8;
+        }
+        .option img {
+            max-width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .option h3 {
+            margin: 5px 0;
+            color: #34495e;
+        }
+        .option .votes {
+            font-weight: bold;
+            color: #3498db;
+        }
+        #results {
+            margin-top: 30px;
+        }
+        .result-bar {
+            height: 30px;
+            margin: 10px 0;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            color: white;
+            border-radius: 4px;
+        }
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e8f4fd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kubernetes Hackathon Voting App</h1>
+        
+        <div class="status" id="status">Connected to server</div>
+        
+        <div class="options" id="options">
+            <div class="option" onclick="vote('kubernetes')">
+                <img src="https://d33wubrfki0l68.cloudfront.net/69e55f968a6f44613384615c6a78b881bfe28bd6/42cd3/svg/kubernetes-seeklogo.com.svg" alt="Kubernetes Logo">
+                <h3>Kubernetes</h3>
+                <p class="votes" id="kubernetes-votes">0 votes</p>
+            </div>
+            <div class="option" onclick="vote('docker')">
+                <img src="https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png" alt="Docker Logo">
+                <h3>Docker</h3>
+                <p class="votes" id="docker-votes">0 votes</p>
+            </div>
+            <div class="option" onclick="vote('helm')">
+                <img src="https://helm.sh/img/helm.svg" alt="Helm Logo">
+                <h3>Helm</h3>
+                <p class="votes" id="helm-votes">0 votes</p>
+            </div>
+            <div class="option" onclick="vote('prometheus')">
+                <img src="https://prometheus.io/assets/icon.png" alt="Prometheus Logo">
+                <h3>Prometheus</h3>
+                <p class="votes" id="prometheus-votes">0 votes</p>
+            </div>
+        </div>
+        
+        <div id="results">
+            <h2>Current Results</h2>
+            <div id="result-bars"></div>
+        </div>
+    </div>
+
+    <script>
+        // Voting functionality
+        function vote(option) {
+            fetch('/api/vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ option: option }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateVotes(data.votes);
+                
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = `Vote for ${option} recorded successfully!`;
+                statusElement.style.backgroundColor = '#d4edda';
+                
+                setTimeout(() => {
+                    statusElement.textContent = 'Connected to server';
+                    statusElement.style.backgroundColor = '#e8f4fd';
+                }, 2000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = 'Error recording vote';
+                statusElement.style.backgroundColor = '#f8d7da';
+            });
+        }
+        
+        // Update vote counts
+        function updateVotes(voteData) {
+            for (const [key, value] of Object.entries(voteData)) {
+                const element = document.getElementById(`${key}-votes`);
+                if (element) {
+                    element.textContent = `${value} votes`;
+                }
+            }
+            updateResults(voteData);
+        }
+        
+        // Update results bars
+        function updateResults(voteData) {
+            const resultBars = document.getElementById('result-bars');
+            resultBars.innerHTML = '';
+            
+            const total = Object.values(voteData).reduce((sum, current) => sum + current, 0) || 1;
+            
+            for (const [key, value] of Object.entries(voteData)) {
+                const percentage = Math.round((value / total) * 100);
+                
+                const bar = document.createElement('div');
+                bar.className = 'result-bar';
+                bar.style.width = `${percentage}%`;
+                bar.textContent = `${key}: ${percentage}%`;
+                
+                resultBars.appendChild(bar);
+            }
+        }
+        
+        // Get initial vote data when page loads
+        window.onload = function() {
+            fetch('/api/votes')
+            .then(response => response.json())
+            .then(data => {
+                updateVotes(data);
+            })
+            .catch(error => {
+                console.error('Error fetching votes:', error);
+            });
+        };
+    </script>
+</body>
+</html>

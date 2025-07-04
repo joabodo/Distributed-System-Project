@@ -70,7 +70,7 @@ docker ps
 - Sends 10,000 async requests to `/home`  
 - **Generates a bar chart** showing how many requests each server handled  
 
-> Output: `a1_load_distribution.png`
+> Output: ![Bar Screenshot](a1_load_distribution.png)
 
 ---
 
@@ -80,7 +80,7 @@ docker ps
 - Adds 2 to 6 replicas and sends 10,000 requests per run  
 - **Plots the average load per server** in a line graph  
 
-> Output: `a2_avg_load_plot.png`
+> Output: ![Line Screenshot](a2_avg_load_plot.png)
 
 ---
 
